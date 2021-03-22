@@ -2,7 +2,8 @@
 import ElementProps from "./common/interface/Element";
 import { createElement } from './common/util/ElementUtil';
 import './style/style.scss'
-import $ from "jquery";
+import './style/fancy.scss'
+import  * as $ from "jquery";
 let createEditor = (): HTMLElement => {
     let editor: ElementProps = {
         className: 'editor'
@@ -37,7 +38,7 @@ function throttle(callback: Function) {
 }
 let createResult = (): HTMLElement => {
     let result: ElementProps = {
-        className: 'result',
+        className: 'result markdown-body',
         id:'result'
     }
     return createElement('div', result)

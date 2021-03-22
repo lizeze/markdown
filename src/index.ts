@@ -1,14 +1,15 @@
 import { init } from './init'
-import $ from 'jquery';
-import marked from 'marked'
-import VNode from './common//interface/Vnode'
-import { h, patch } from './snabbdom'
+import * as $ from 'jquery';
+import  * as  marked from 'marked'
+// import VNode from './common//interface/Vnode'
+// import { h, patch } from './snabbdom'
 
 import { parseHTML } from './common/util/HtmlParse'
 init((html: string) => {
+    console.log(html);
     let mdHTML = marked(html)
-    console.log(
-        (parseHTML(mdHTML)as Document).body)
+    // console.log(
+    //     (parseHTML(mdHTML)as Document).body)
     $('.result').html(mdHTML)
 })
 

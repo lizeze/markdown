@@ -38,7 +38,7 @@ module.exports = {
         ],
     },
     resolve: {
-       
+
         extensions: ['.tsx', '.ts', '.js', '.css'],
     },
 
@@ -48,5 +48,6 @@ module.exports = {
     },
     devServer: {
         contentBase: '../dist',
+        port:'8989'
     },
 };
