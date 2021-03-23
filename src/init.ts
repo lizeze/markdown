@@ -80,8 +80,9 @@ let eventBind = (callback: Function) => {
     }
 }
 
-const clearTextNode = ['pre', 'blockquote']
+const clearTextNode = ['pre', 'blockquote','ul']
 const clearNode = (item: HTMLElement): string => {
+    debugger
     if (clearTextNode.indexOf(item.nodeName.toLowerCase()) > -1) {
         return ''
     }
