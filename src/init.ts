@@ -1,9 +1,11 @@
-
 import ElementProps from "./common/interface/Element";
-import { createElement } from './common/util/ElementUtil';
+import {createElement} from './common/util/ElementUtil';
 import './style/style.scss'
 import './style/fancy.scss'
-import  * as $ from "jquery";
+import * as $ from "jquery";
+import {h, patch} from "./snabbdom";
+
+
 let createEditor = (): HTMLElement => {
     let editor: ElementProps = {
         className: 'editor'
@@ -36,10 +38,11 @@ function throttle(callback: Function) {
         }
     }
 }
+
 let createResult = (): HTMLElement => {
     let result: ElementProps = {
         className: 'result markdown-body',
-        id:'result'
+        id: 'result'
     }
     return createElement('div', result)
 }
@@ -77,6 +80,64 @@ let eventBind = (callback: Function) => {
     }
 }
 
+const clearTextNode = ['pre', 'blockquote']
+const clearNode = (item: HTMLElement): string => {
+    if (clearTextNode.indexOf(item.nodeName.toLowerCase()) > -1) {
+        return ''
+    }
+    if (item.nodeName.toLowerCase() === 'p') {
+        if (item.childNodes.length == 1 && item.childNodes[0].nodeName.toLowerCase() === 'strong') {
+
+            return ''
+        }
+
+    }
+    return item.textContent
+}
+
+let oldNode = null
+
+
+const getNode = (item: HTMLElement, root: boolean) => {
+    let el = {el: null, nodes: []}
+    el.el = item
+    if (item && item.childNodes) {
+        if (!root) {
+            el.nodes.push(clearNode(item))
+        }
+        item.childNodes.forEach(node => {
+            if (node.nodeType !== 3)
+                el.nodes.push(getNode(node as HTMLElement, false))
+        })
+    }
+    let elementTag = ''
+    if (root)
+        elementTag = '#result.result.markdown-body'
+    else {
+        if (el.el.id)
+            elementTag += '#' + el.el.id
+        if (el.el.className) elementTag += '.' + el.el.className.split(' ').join('.')
+    }
+    let attr = {
+        props: {src: '', textContent: ''}
+    }
+    if (el.el.nodeName.toLowerCase() === 'img') {
+        attr.props.src = el.el.src
+    }
+    let tagName = el.el.nodeName.toLowerCase() === 'body' ? 'div' : el.el.nodeName
+    return h(tagName + elementTag, attr, el.nodes);
+}
+const render = (el) => {
+    let vNode = getNode(el, true)
+    let element: HTMLElement = document.getElementById("result") as HTMLElement;
+    if (oldNode)
+        patch(oldNode, vNode);
+    else {
+        patch(element, vNode)
+    }
+    oldNode = vNode
+}
 export {
-    init
+    init,
+    render
 }
