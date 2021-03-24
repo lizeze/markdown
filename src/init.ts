@@ -1,9 +1,9 @@
 import ElementProps from "./common/interface/Element";
-import {createElement} from './common/util/ElementUtil';
+import { createElement } from './common/util/ElementUtil';
 import './style/style.scss'
 import './style/fancy.scss'
 import * as $ from "jquery";
-import {h, patch} from "./snabbdom";
+import { h, patch } from "./snabbdom";
 
 
 let createEditor = (): HTMLElement => {
@@ -80,18 +80,24 @@ let eventBind = (callback: Function) => {
     }
 }
 
-const clearTextNode = ['pre', 'blockquote','ul']
+const clearTextNode = ['pre', 'blockquote', 'ul']
 const clearNode = (item: HTMLElement): string => {
     debugger
+    const nodeName = item.nodeName.toLowerCase()
     if (clearTextNode.indexOf(item.nodeName.toLowerCase()) > -1) {
         return ''
+    }
+
+    if (nodeName === 'li') {
+        if (item.childNodes.length == 2) {
+            return ''
+        }
     }
     if (item.nodeName.toLowerCase() === 'p') {
         if (item.childNodes.length == 1 && item.childNodes[0].nodeName.toLowerCase() === 'strong') {
 
             return ''
         }
-
     }
     return item.textContent
 }
@@ -100,11 +106,13 @@ let oldNode = null
 
 
 const getNode = (item: HTMLElement, root: boolean) => {
-    let el = {el: null, nodes: []}
+    let el = { el: null, nodes: [] }
     el.el = item
     if (item && item.childNodes) {
         if (!root) {
-            el.nodes.push(clearNode(item))
+            let text = clearNode(item)
+            if (text)
+                el.nodes.push(text)
         }
         item.childNodes.forEach(node => {
             if (node.nodeType !== 3)
@@ -120,10 +128,11 @@ const getNode = (item: HTMLElement, root: boolean) => {
         if (el.el.className) elementTag += '.' + el.el.className.split(' ').join('.')
     }
     let attr = {
-        props: {src: '', textContent: ''}
+        props: { src: '', textContent: '', alt: '' }
     }
     if (el.el.nodeName.toLowerCase() === 'img') {
         attr.props.src = el.el.src
+        attr.props.alt = el.el.alt
     }
     let tagName = el.el.nodeName.toLowerCase() === 'body' ? 'div' : el.el.nodeName
     return h(tagName + elementTag, attr, el.nodes);

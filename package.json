@@ -27,6 +27,7 @@
     "build": "webpack --config config/webpack.conf.prod.js"
   },
   "dependencies": {
+    "highlight.js": "^10.7.1",
     "jquery": "^3.6.0",
     "marked": "^2.0.1",
     "snabbdom": "^2.1.0"
